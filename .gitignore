@@ -15,57 +15,6 @@ Thumbs.db
 *.stackdump
 
 #---------------------------#
-#        Prerequisites      #
-#---------------------------#
-*.d
-
-#---------------------------#
-#    Precompiled Headers    #
-#---------------------------#
-*.gch
-*.pch
-
-#---------------------------#
-#     Fortran module files  #
-#---------------------------#
-*.mod
-*.smod
-
-#---------------------------#
-#   Compiled Static Libraries
-#---------------------------#
-*.lai
-*.la
-*.a
-*.lib
-*.lo
-*.slo
-
-#---------------------------#
-#        Object files       #
-#---------------------------#
-*.o
-*.obj
-
-#---------------------------#
-#         Executables       #
-#---------------------------#
-*.out
-*.exe
-*.app
-*.dll
-*.so
-*.dylib
-
-#---------------------------#
-#          Build dirs       #
-#---------------------------#
-build/
-bin/
-obj/
-cmake-build-*/
-
-#---------------------------#
 #     Visual Studio Files   #
 #---------------------------#
 .vs/
@@ -76,6 +25,38 @@ cmake-build-*/
 VC.db
 *.VC.db
 *.VC.opendb
+
+#---------------------------#
+#        Build Artifacts    #
+#---------------------------#
+[xX]64/
+[dD]ebug/
+[ rR]elease/
+build/
+bin/
+obj/
+*.exe
+*.dll
+*.lib
+*.a
+*.so
+*.dylib
+*.pdb
+*.ilk
+*.tlog
+*.recipe
+*.idb
+
+#---------------------------#
+#   Intermediate Files      #
+#---------------------------#
+*.obj
+*.pch
+*.pdb
+*.ipch/
+*.aps
+*.ncb
+*.opendb
 
 #---------------------------#
 #      IDE Specific Files   #
