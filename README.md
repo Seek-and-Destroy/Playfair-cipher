@@ -55,8 +55,6 @@
                 Linker -> Input -> Additional Dependencies: добавьте для Debug
                 
 
-                Linker -> Input -> Additional Dependencies: добавьте для Debug
-
 
 
 # Использование
