@@ -1,62 +1,98 @@
-# Prerequisites
+#---------------------------#
+#      OS Generated Files   #
+#---------------------------#
+.DS_Store
+Thumbs.db
+
+#---------------------------#
+#       Logs and Temp Files #
+#---------------------------#
+*.log
+*.tmp
+*.swp
+*.swo
+*.cache
+*.stackdump
+
+#---------------------------#
+#        Prerequisites      #
+#---------------------------#
 *.d
 
-# Precompiled Headers
+#---------------------------#
+#    Precompiled Headers    #
+#---------------------------#
 *.gch
 *.pch
 
-# Fortran module files
+#---------------------------#
+#     Fortran module files  #
+#---------------------------#
 *.mod
 *.smod
 
-# Compiled Static libraries
+#---------------------------#
+#   Compiled Static Libraries
+#---------------------------#
 *.lai
 *.la
 *.a
 *.lib
-
-# Build files
-*.o
-*.slo
 *.lo
+*.slo
+
+#---------------------------#
+#        Object files       #
+#---------------------------#
+*.o
 *.obj
+
+#---------------------------#
+#         Executables       #
+#---------------------------#
 *.out
 *.exe
 *.app
 *.dll
-*.a
-*.lib
 *.so
 *.dylib
+
+#---------------------------#
+#          Build dirs       #
+#---------------------------#
 build/
 bin/
 obj/
 cmake-build-*/
 
-# IDE files
+#---------------------------#
+#     Visual Studio Files   #
+#---------------------------#
 .vs/
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
+VC.db
+*.VC.db
+*.VC.opendb
+
+#---------------------------#
+#      IDE Specific Files   #
+#---------------------------#
 /.vscode/
 /.idea/
 
-# Dependencies
+#---------------------------#
+#         Dependencies      #
+#---------------------------#
 /vendor/
 /libs/
 /conan/
 /vcpkg/
 
-# Environment files
+#---------------------------#
+#       Environment Files   #
+#---------------------------#
 .env
 .env.*
-
-# Logs and temp files
-*.log
-*.tmp
-*.swp
-*.swo
-Thumbs.db
-.DS_Store
-
