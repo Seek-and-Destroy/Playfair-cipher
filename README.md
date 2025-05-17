@@ -45,6 +45,10 @@
 
 
         2. Настройте проект в Visual Studio (после открытия, см. ниже):
+        
+        
+        Project -> Properties:
+        
 
                 C/C++ -> General -> Additional Include Directories: добавьте путь к SFML include
 
@@ -52,7 +56,26 @@
                 Linker -> General -> Additional Library Directories: добавьте путь к SFML lib
 
 
-                Linker -> Input -> Additional Dependencies: добавьте для Debug
+                Linker -> Input -> Additional Dependencies: 
+
+               
+                        Debug: sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib.
+
+                        Release: sfml-graphics.lib;sfml-window.lib;sfml-system.lib.
+                        
+
+
+               Linker -> Advanced -> Entry Point:
+
+
+                       Enter: mainCRTStartup
+
+               
+               
+               Linker -> System ->  Subsystem:
+
+
+                       Windows (/SUBSYSTEM:WINDOWS)
                 
 
 
