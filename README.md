@@ -75,7 +75,7 @@
 
                        Windows (/SUBSYSTEM:WINDOWS)
                 
-        3. Закинуть файлы из папки SFML-2.5.1\bin в ваш диск:\папка проекта\Playfair-cipher\Playfair-cipher\x64\Debug
+        3. Закинуть файлы из папки SFML-2.5.1\bin на ваш диск:\папка проекта\Playfair-cipher\Playfair-cipher\x64\Debug
 
 
 # Использование
