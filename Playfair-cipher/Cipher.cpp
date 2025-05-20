@@ -1,6 +1,7 @@
 #include "Cipher.h"
 #include <cctype>
 
+
 // Подготовка текста: удаление не-букв, замена J на I, разбиение на биграммы
 std::string prepareText(const std::string& text) {
     // Очищаем текст: только буквы, верхний регистр, J->I
@@ -69,11 +70,10 @@ Cipher::Cipher(const std::string& keyword) {
         }
     }
 
-    // Инициализируем матрицу пробелами
+    // Выделяем память под матрицу
+    matrix = new char*[5];
     for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 5; j++) {
-            matrix[i][j] = ' ';
-        }
+        matrix[i] = new char[5];
     }
 
     // Заполняем матрицу ключом
@@ -114,107 +114,83 @@ Cipher::Cipher(const std::string& keyword) {
     }
 }
 
-// Деструктор: matrix — статический массив, очистка не требуется
+// Деструктор: очистка памяти массива
 Cipher::~Cipher() {
-    // matrix автоматически очищается, так как это статический массив
-    // key (std::string) также очищается автоматически
+    for (int i = 0; i < 5; i++) {
+        delete matrix[i];
+    }
+    delete matrix;
 }
 
-// Поиск позиции буквы в матрице
 void Cipher::findPosition(char c, int& row, int& col) {
-    row = -1;
-    col = -1;
-    for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 5; j++) {
-            if (matrix[i][j] == c) {
-                row = i; // Запоминаем строку
-                col = j; // Запоминаем столбец
+    if (c == 'J') c = 'I';
+    for (int r = 0; r < 5; ++r) {
+        for (int c2 = 0; c2 < 5; ++c2) {
+            if (matrix[r][c2] == c) {
+                row = r;
+                col = c2;
                 return;
             }
         }
     }
 }
 
-// Шифрование текста по правилам Плейфера
 std::string Cipher::encrypt(const std::string& text) {
-    std::string prepared = prepareText(text); // Подготавливаем текст
-    std::string result;
+    std::string prepared = prepareText(text);
+    std::string result = "";
 
-    // Обрабатываем пары букв (биграммы)
-    for (int i = 0; i < prepared.length(); i += 2) {
+    for (size_t i = 0; i < prepared.length(); i += 2) {
+        char a = prepared[i];
+        char b = prepared[i + 1];
         int row1, col1, row2, col2;
-        findPosition(prepared[i], row1, col1); // Находим позицию первой буквы
-        findPosition(prepared[i + 1], row2, col2); // Находим позицию второй буквы
 
-        // Правило 1: Если буквы в одной строке, берём следующие справа
+        findPosition(a, row1, col1);
+        findPosition(b, row2, col2);
+
         if (row1 == row2) {
             result += matrix[row1][(col1 + 1) % 5];
             result += matrix[row2][(col2 + 1) % 5];
-        }
-        // Правило 2: Если буквы в одном столбце, берём следующие снизу
-        else if (col1 == col2) {
+        } else if (col1 == col2) {
             result += matrix[(row1 + 1) % 5][col1];
             result += matrix[(row2 + 1) % 5][col2];
-        }
-        // Правило 3: Если буквы в разных строках и столбцах, берём углы прямоугольника
-        else {
+        } else {
             result += matrix[row1][col2];
             result += matrix[row2][col1];
         }
     }
+
     return result;
 }
 
-// Дешифрование текста по правилам Плейфера
 std::string Cipher::decrypt(const std::string& text) {
-    std::string prepared = prepareText(text); // Подготавливаем текст
-    std::string result;
+    std::string prepared = prepareText(text);
+    std::string result = "";
 
-    // Обрабатываем пары букв (биграммы)
-    for (int i = 0; i < prepared.length(); i += 2) {
+    for (size_t i = 0; i < prepared.length(); i += 2) {
+        char a = prepared[i];
+        char b = prepared[i + 1];
         int row1, col1, row2, col2;
-        findPosition(prepared[i], row1, col1); // Находим позицию первой буквы
-        findPosition(prepared[i + 1], row2, col2); // Находим позицию второй буквы
 
-        // Правило 1: Если буквы в одной строке, берём предыдущие слева
+        findPosition(a, row1, col1);
+        findPosition(b, row2, col2);
+
         if (row1 == row2) {
-            result += matrix[row1][(col1 + 4) % 5]; // Сдвиг влево (4 = 5-1)
+            result += matrix[row1][(col1 + 4) % 5];
             result += matrix[row2][(col2 + 4) % 5];
-        }
-        // Правило 2: Если буквы в одном столбце, берём предыдущие сверху
-        else if (col1 == col2) {
-            result += matrix[(row1 + 4) % 5][col1]; // Сдвиг вверх (4 = 5-1)
+        } else if (col1 == col2) {
+            result += matrix[(row1 + 4) % 5][col1];
             result += matrix[(row2 + 4) % 5][col2];
-        }
-        // Правило 3: Если буквы в разных строках и столбцах, берём углы прямоугольника
-        else {
+        } else {
             result += matrix[row1][col2];
             result += matrix[row2][col1];
         }
     }
 
-    // Удаляем лишние X, добавленные при шифровании
-    std::string cleaned;
-    for (int i = 0; i < result.length(); i++) {
-        cleaned += result[i];
-        // Если X между одинаковыми буквами, пропускаем его
-        if (i + 2 < result.length() && result[i + 1] == 'X' && result[i] == result[i + 2]) {
-            i++;
-        }
-    }
-    return cleaned;
+    return result;
 }
+
 
 // Возвращает матрицу как динамический массив (вызывающий код должен освободить память)
 char** Cipher::getMatrix() const {
-    // Выделяем память для массива указателей (5 строк)
-    char** result = new char* [5];
-    // Для каждой строки выделяем память и копируем данные
-    for (int i = 0; i < 5; i++) {
-        result[i] = new char[5]; // Выделяем память для 5 символов
-        for (int j = 0; j < 5; j++) {
-            result[i][j] = matrix[i][j]; // Копируем символ из matrix
-        }
-    }
-    return result;
+    return matrix;
 }

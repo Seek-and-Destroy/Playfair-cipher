@@ -2,8 +2,7 @@
 #include <string>
 
 // Конструктор: создаёт окно и настраивает текстовые элементы
-Visualizer::Visualizer() : window(sf::VideoMode(800, 600), "Playfair Cipher"),
-isEncryptMode(true), state(INPUT_KEYWORD) {
+Visualizer::Visualizer() : cipher(nullptr), window(sf::VideoMode(800, 600), "Playfair Cipher"), state(INPUT_KEYWORD) {
     // Загружаем шрифт Arial из системной папки Windows
     if (!font.loadFromFile("C:\\Windows\\Fonts\\arial.ttf")) {
         window.close(); // Если шрифт не найден, закрываем окно
@@ -23,6 +22,12 @@ isEncryptMode(true), state(INPUT_KEYWORD) {
     resultText.setFillColor(sf::Color::White);
 }
 
+// Деструктор
+Visualizer::~Visualizer()  {
+    if (cipher)
+        delete cipher;
+}
+
 // Основной цикл программы: обрабатывает события и обновляет экран
 void Visualizer::run() {
     while (window.isOpen()) {
@@ -39,6 +44,10 @@ void Visualizer::handleEvents() {
         if (event.type == sf::Event::Closed) {
             window.close();
         }
+
+        if ((state == INPUT_KEYWORD) && (cipher != nullptr)) // пропуск фазы ввода ключ. слова, если оно уже есть
+            state = INPUT_TEXT;
+
         // Обработка ввода текста (только в состояниях ввода ключа или текста)
         if (event.type == sf::Event::TextEntered && state != SHOW_RESULT) {
             if (event.text.unicode < 128) { // Ограничиваемся ASCII символами
@@ -47,10 +56,10 @@ void Visualizer::handleEvents() {
                     // Backspace: удаляем последний символ
                     currentInput.pop_back();
                 }
-                else if (c == '\r' || c == '\n') {
+                else if ((c == '\r' || c == '\n') && currentInput != "") {
                     // Enter: переходим к следующему состоянию
                     if (state == INPUT_KEYWORD) {
-                        keyword = currentInput; // Сохраняем ключ
+                        cipher = new Cipher(currentInput); // Сохраняем матрицу
                         currentInput.clear();
                         state = INPUT_TEXT; // Переходим к вводу текста
                     }
@@ -66,20 +75,16 @@ void Visualizer::handleEvents() {
                 }
             }
         }
-        // Обработка нажатий клавиш
+
         if (event.type == sf::Event::KeyPressed) {
             if (state == SELECT_MODE) {
                 // В режиме выбора: 1 — шифрование, 2 — дешифрование
                 if (event.key.code == sf::Keyboard::Num1) {
-                    isEncryptMode = true;
-                    Cipher cipher(keyword); // Создаём объект шифра
-                    outputText = cipher.encrypt(inputText); // Шифруем
+                    outputText = cipher->encrypt(inputText); // Шифруем
                     state = SHOW_RESULT; // Показываем результат
                 }
                 else if (event.key.code == sf::Keyboard::Num2) {
-                    isEncryptMode = false;
-                    Cipher cipher(keyword); // Создаём объект шифра
-                    outputText = cipher.decrypt(inputText); // Дешифруем
+                    outputText = cipher->decrypt(inputText); // Дешифруем
                     state = SHOW_RESULT; // Показываем результат
                 }
             }
@@ -118,8 +123,7 @@ void Visualizer::updateDisplay() {
         displayText.setString(outputText);
 
         // Отображаем матрицу 5x5
-        Cipher cipher(keyword);
-        char** matrix = cipher.getMatrix(); // Получаем матрицу
+        char** matrix = cipher->getMatrix(); // Получаем матрицу
         std::string matrixStr = "Matrix:\n";
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
@@ -128,11 +132,7 @@ void Visualizer::updateDisplay() {
             }
             matrixStr += "\n"; // Новая строка
         }
-        // Освобождаем память
-        for (int i = 0; i < 5; i++) {
-            delete[] matrix[i]; // Очищаем каждую строку
-        }
-        delete[] matrix; // Очищаем массив указателей
+
         resultText.setString(matrixStr);
         resultText.setPosition(50, 300); // Позиция матрицы на экране
         window.draw(resultText);
@@ -144,6 +144,5 @@ void Visualizer::updateDisplay() {
     displayText.setPosition(50, 100); // Введённый текст ниже
     window.draw(promptText);
     window.draw(displayText);
-
     window.display(); // Обновляем экран
 }

@@ -3,7 +3,7 @@
 
 class Cipher {
 private:
-    char matrix[5][5]; // Статическая матрица 5x5
+    char** matrix;// Динамическая матрица 5x5
 
     std::string key; // Ключевое слово
 
